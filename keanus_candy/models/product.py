@@ -2,7 +2,7 @@ from typing import List
 
 
 class Product:
-    """Generic product class."""
+    """Generic product class representing an item in the store."""
     
     def __init__(self, product_id: int, name: str, price: float, description: str):
         self.product_id = product_id
@@ -11,8 +11,17 @@ class Product:
         self.description = description
 
     def display(self):
+        """Return a human-readable description of the product."""
         return f"{self.name} - ${self.price:.2f}"
 
+    def apply_discount(self, percent: float):
+        """ Apply a discount to the product price
+        : param percent: Discount percentage (0-100)
+        """
+        if 0 <= percent <= 100:
+            self.price = round(self.price * (1 - percent / 100), 2)
+        else:
+            raise ValueError("Discount must be between 0 and 100")
 
 class Candy(Product):
     """Specific type of product (inherits Product)."""
@@ -34,7 +43,7 @@ class Candy(Product):
 
 
 class Catalog:
-    """Collection of all candies."""
+    """Collection of all candies with search and inventory utilities."""
     
     def __init__(self):
         self.candies: List[Candy] = []
@@ -46,3 +55,9 @@ class Catalog:
     def search(self, keyword: str) -> List[Candy]:
         """Search for candies by keyword in the name."""
         return [c for c in self.candies if keyword.lower() in c.name.lower()]
+
+    def list_available(self) -> list[candy]:
+        return [c for c in self.candies if c.is_available()]
+
+    def total_inventory_value(self) -> float:
+        return sum(c.price * c.quanity for c in self.candies)
